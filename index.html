@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>找不同的色块</title>
+    <title>找不同的色块 - 挑战模式</title>
     <style>
         * {
             margin: 0;
@@ -19,6 +19,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow: hidden;
         }
 
         .container {
@@ -26,8 +27,74 @@
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 欢迎页面 */
+        .welcome-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-screen h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .welcome-screen .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .welcome-screen .challenge-info {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .challenge-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .challenge-info ul {
+            text-align: left;
+            display: inline-block;
+            line-height: 2;
+        }
+
+        .challenge-info li {
+            color: #555;
+        }
+
+        .challenge-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .challenge-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        /* 游戏页面 */
+        .game-screen {
+            display: none;
         }
 
         h1 {
@@ -35,6 +102,50 @@
             color: #667eea;
             margin-bottom: 20px;
             font-size: 2em;
+        }
+
+        .level-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .level-info h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .level-progress {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .level-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .level-dot.completed {
+            background: #4CAF50;
+        }
+
+        .level-dot.current {
+            background: white;
+            color: #667eea;
+            transform: scale(1.3);
         }
 
         .game-info {
@@ -76,16 +187,6 @@
             min-width: 120px;
         }
 
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
-
         .btn-secondary {
             background: #f0f0f0;
             color: #333;
@@ -96,37 +197,18 @@
             transform: translateY(-2px);
         }
 
-        .difficulty-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .difficulty-btn {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #667eea;
-            background: white;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
-
-        .difficulty-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
         .game-board {
             display: grid;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 20px;
             aspect-ratio: 1;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .color-block {
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
             border: 3px solid transparent;
@@ -134,7 +216,7 @@
 
         .color-block:hover {
             transform: scale(0.95);
-            border-color: white;
+            border-color: rgba(102, 126, 234, 0.5);
         }
 
         .message {
@@ -153,197 +235,242 @@
             color: #f44336;
         }
 
-        .stats {
+        /* 通关页面 */
+        .victory-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .victory-screen h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
+
+        .victory-screen .stats-summary {
             background: #f9f9f9;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .stats-summary h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .stats-summary .stat {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #555;
+        }
+
+        .stats-summary .stat strong {
+            color: #667eea;
+        }
+
+        .restart-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
             margin-top: 20px;
         }
 
-        .stats h3 {
-            color: #667eea;
-            margin-bottom: 10px;
+        .restart-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+        /* 撒花特效 */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 9999;
         }
 
-        .stat-item {
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
 
-        .stat-label {
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #667eea;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.05); }
         }
 
         .pulse {
             animation: pulse 0.3s ease;
         }
+
+        /* 隐藏类 */
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎨 找不同的色块</h1>
+        <!-- 欢迎页面 -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1>🎨 找不同的色块</h1>
+            <p class="subtitle">挑战你的眼力和反应速度！</p>
 
-        <div class="game-info">
-            <div class="info-item">得分: <span id="score">0</span></div>
-            <div class="info-item">最高分: <span id="highScore">0</span></div>
-            <div class="info-item">连击: <span id="combo">0</span></div>
-        </div>
-
-        <div class="difficulty-selector">
-            <button class="difficulty-btn" data-level="easy">简单 (3x3)</button>
-            <button class="difficulty-btn active" data-level="medium">中等 (4x4)</button>
-            <button class="difficulty-btn" data-level="hard">困难 (5x5)</button>
-        </div>
-
-        <div class="controls">
-            <button class="btn btn-primary" id="startBtn">开始游戏</button>
-            <button class="btn btn-secondary" id="pauseBtn" disabled>暂停</button>
-            <button class="btn btn-secondary" id="soundBtn">🔊 音效开</button>
-        </div>
-
-        <div class="message" id="message"></div>
-
-        <div class="game-board" id="gameBoard"></div>
-
-        <div class="stats">
-            <h3>📊 游戏统计</h3>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-label">本局正确</div>
-                    <div class="stat-value" id="correctCount">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">本局错误</div>
-                    <div class="stat-value" id="wrongCount">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">正确率</div>
-                    <div class="stat-value" id="accuracy">0%</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">最高连击</div>
-                    <div class="stat-value" id="maxCombo">0</div>
-                </div>
+            <div class="challenge-info">
+                <h3>🎯 挑战规则</h3>
+                <ul>
+                    <li>从第1关（4×4）开始挑战</li>
+                    <li>每通过一关，网格增加一行一列</li>
+                    <li>一直挑战到第7关（10×10）</li>
+                    <li>找出颜色不同的色块即可过关</li>
+                    <li>完成全部关卡即为通关！</li>
+                </ul>
             </div>
+
+            <button class="challenge-btn" id="acceptChallengeBtn">接受挑战</button>
+        </div>
+
+        <!-- 游戏页面 -->
+        <div class="game-screen" id="gameScreen">
+            <h1>🎨 找不同的色块</h1>
+
+            <div class="level-info">
+                <h2>第 <span id="currentLevel">1</span> 关 - <span id="gridInfo">4×4</span></h2>
+                <div class="level-progress" id="levelProgress"></div>
+            </div>
+
+            <div class="game-info">
+                <div class="info-item">得分: <span id="score">0</span></div>
+                <div class="info-item">连击: <span id="combo">0</span></div>
+                <div class="info-item">正确: <span id="correctCount">0</span></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-secondary" id="pauseBtn">暂停</button>
+                <button class="btn btn-secondary" id="soundBtn">🔊 音效开</button>
+                <button class="btn btn-secondary" id="quitBtn">退出</button>
+            </div>
+
+            <div class="message" id="message"></div>
+
+            <div class="game-board" id="gameBoard"></div>
+        </div>
+
+        <!-- 通关页面 -->
+        <div class="victory-screen" id="victoryScreen">
+            <h1>🎉 恭喜通关！</h1>
+
+            <div class="stats-summary">
+                <h3>📊 挑战统计</h3>
+                <div class="stat">总得分: <strong id="finalScore">0</strong></div>
+                <div class="stat">正确次数: <strong id="finalCorrect">0</strong></div>
+                <div class="stat">错误次数: <strong id="finalWrong">0</strong></div>
+                <div class="stat">最高连击: <strong id="finalMaxCombo">0</strong></div>
+                <div class="stat">正确率: <strong id="finalAccuracy">0%</strong></div>
+            </div>
+
+            <button class="restart-btn" id="restartBtn">再来一次</button>
         </div>
     </div>
 
     <script>
-        class ColorGame {
+        class ColorChallengeGame {
             constructor() {
+                this.currentLevel = 1;
+                this.maxLevel = 7;
                 this.score = 0;
-                this.highScore = parseInt(localStorage.getItem('highScore')) || 0;
                 this.combo = 0;
                 this.maxCombo = 0;
                 this.correctCount = 0;
                 this.wrongCount = 0;
-                this.difficulty = 'medium';
-                this.gridSize = 4;
                 this.isPaused = false;
-                this.isPlaying = false;
                 this.soundEnabled = true;
                 this.differentBlockIndex = -1;
 
                 this.initElements();
                 this.initEventListeners();
-                this.updateDisplay();
             }
 
             initElements() {
+                this.welcomeScreen = document.getElementById('welcomeScreen');
+                this.gameScreen = document.getElementById('gameScreen');
+                this.victoryScreen = document.getElementById('victoryScreen');
                 this.gameBoard = document.getElementById('gameBoard');
                 this.scoreEl = document.getElementById('score');
-                this.highScoreEl = document.getElementById('highScore');
                 this.comboEl = document.getElementById('combo');
                 this.messageEl = document.getElementById('message');
-                this.startBtn = document.getElementById('startBtn');
                 this.pauseBtn = document.getElementById('pauseBtn');
                 this.soundBtn = document.getElementById('soundBtn');
+                this.quitBtn = document.getElementById('quitBtn');
                 this.correctCountEl = document.getElementById('correctCount');
-                this.wrongCountEl = document.getElementById('wrongCount');
-                this.accuracyEl = document.getElementById('accuracy');
-                this.maxComboEl = document.getElementById('maxCombo');
+                this.currentLevelEl = document.getElementById('currentLevel');
+                this.gridInfoEl = document.getElementById('gridInfo');
+                this.levelProgressEl = document.getElementById('levelProgress');
             }
 
             initEventListeners() {
-                this.startBtn.addEventListener('click', () => this.startGame());
+                document.getElementById('acceptChallengeBtn').addEventListener('click', () => this.startChallenge());
                 this.pauseBtn.addEventListener('click', () => this.togglePause());
                 this.soundBtn.addEventListener('click', () => this.toggleSound());
-
-                document.querySelectorAll('.difficulty-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => this.changeDifficulty(e.target));
-                });
+                this.quitBtn.addEventListener('click', () => this.quitGame());
+                document.getElementById('restartBtn').addEventListener('click', () => this.restartGame());
             }
 
-            changeDifficulty(btn) {
-                if (this.isPlaying) return;
-
-                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                this.difficulty = btn.dataset.level;
-                this.gridSize = this.difficulty === 'easy' ? 3 : this.difficulty === 'medium' ? 4 : 5;
-            }
-
-            startGame() {
-                this.isPlaying = true;
-                this.isPaused = false;
+            startChallenge() {
+                this.welcomeScreen.classList.add('hidden');
+                this.gameScreen.classList.remove('hidden');
+                this.currentLevel = 1;
                 this.score = 0;
                 this.combo = 0;
+                this.maxCombo = 0;
                 this.correctCount = 0;
                 this.wrongCount = 0;
-                this.maxCombo = 0;
-
-                this.startBtn.textContent = '重新开始';
-                this.pauseBtn.disabled = false;
-
-                document.querySelectorAll('.difficulty-btn').forEach(btn => btn.disabled = true);
-
-                this.updateDisplay();
-                this.generateBoard();
-                this.showMessage('开始游戏！', 'success');
+                this.updateLevelProgress();
+                this.startLevel();
                 this.playSound('start');
             }
 
-            togglePause() {
-                if (!this.isPlaying) return;
-
-                this.isPaused = !this.isPaused;
-                this.pauseBtn.textContent = this.isPaused ? '继续' : '暂停';
-
-                if (this.isPaused) {
-                    this.gameBoard.style.opacity = '0.5';
-                    this.gameBoard.style.pointerEvents = 'none';
-                    this.showMessage('游戏已暂停', 'error');
-                } else {
-                    this.gameBoard.style.opacity = '1';
-                    this.gameBoard.style.pointerEvents = 'auto';
-                    this.showMessage('继续游戏', 'success');
-                }
+            startLevel() {
+                const gridSize = 3 + this.currentLevel;
+                this.gridSize = gridSize;
+                this.currentLevelEl.textContent = this.currentLevel;
+                this.gridInfoEl.textContent = `${gridSize}×${gridSize}`;
+                this.updateDisplay();
+                this.generateBoard();
+                this.showMessage(`第${this.currentLevel}关开始！`, 'success');
             }
 
-            toggleSound() {
-                this.soundEnabled = !this.soundEnabled;
-                this.soundBtn.textContent = this.soundEnabled ? '🔊 音效开' : '🔇 音效关';
+            updateLevelProgress() {
+                this.levelProgressEl.innerHTML = '';
+                for (let i = 1; i <= this.maxLevel; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'level-dot';
+                    dot.textContent = i;
+                    if (i < this.currentLevel) {
+                        dot.classList.add('completed');
+                    } else if (i === this.currentLevel) {
+                        dot.classList.add('current');
+                    }
+                    this.levelProgressEl.appendChild(dot);
+                }
             }
 
             generateBoard() {
@@ -378,17 +505,15 @@
                 let saturation = parseInt(match[2]);
                 let lightness = parseInt(match[3]);
 
-                const difficulty = this.difficulty;
-                const difference = difficulty === 'easy' ? 30 : difficulty === 'medium' ? 15 : 8;
-
-                lightness += Math.random() > 0.5 ? difference : -difference;
+                const difficulty = Math.max(5, 20 - this.currentLevel * 2);
+                lightness += Math.random() > 0.5 ? difficulty : -difficulty;
                 lightness = Math.max(20, Math.min(90, lightness));
 
                 return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
             }
 
             handleBlockClick(index) {
-                if (!this.isPlaying || this.isPaused) return;
+                if (this.isPaused) return;
 
                 if (index === this.differentBlockIndex) {
                     this.handleCorrect();
@@ -402,44 +527,110 @@
                 this.combo++;
                 this.maxCombo = Math.max(this.maxCombo, this.combo);
 
-                const points = 10 * (1 + this.combo * 0.5);
+                const points = 10 * this.currentLevel * (1 + this.combo * 0.2);
                 this.score += Math.floor(points);
 
-                if (this.score > this.highScore) {
-                    this.highScore = this.score;
-                    localStorage.setItem('highScore', this.highScore);
-                }
-
                 this.updateDisplay();
-                this.showMessage(`正确！+${Math.floor(points)}分`, 'success');
                 this.playSound('correct');
 
                 this.gameBoard.classList.add('pulse');
                 setTimeout(() => this.gameBoard.classList.remove('pulse'), 300);
 
-                setTimeout(() => this.generateBoard(), 500);
+                if (this.currentLevel < this.maxLevel) {
+                    this.showMessage(`正确！+${Math.floor(points)}分`, 'success');
+                    setTimeout(() => {
+                        this.currentLevel++;
+                        this.updateLevelProgress();
+                        this.startLevel();
+                    }, 800);
+                } else {
+                    this.showMessage('恭喜通关！', 'success');
+                    setTimeout(() => this.showVictory(), 1000);
+                }
             }
 
             handleWrong() {
                 this.wrongCount++;
                 this.combo = 0;
-
                 this.updateDisplay();
-                this.showMessage('错误！连击中断', 'error');
+                this.showMessage('错误！再试一次', 'error');
                 this.playSound('wrong');
+            }
+
+            showVictory() {
+                this.gameScreen.classList.add('hidden');
+                this.victoryScreen.classList.remove('hidden');
+
+                document.getElementById('finalScore').textContent = this.score;
+                document.getElementById('finalCorrect').textContent = this.correctCount;
+                document.getElementById('finalWrong').textContent = this.wrongCount;
+                document.getElementById('finalMaxCombo').textContent = this.maxCombo;
+
+                const total = this.correctCount + this.wrongCount;
+                const accuracy = total > 0 ? Math.round((this.correctCount / total) * 100) : 0;
+                document.getElementById('finalAccuracy').textContent = accuracy + '%';
+
+                this.createConfetti();
+                this.playSound('victory');
+            }
+
+            createConfetti() {
+                const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500'];
+                const container = document.body;
+
+                for (let i = 0; i < 150; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.top = '-10px';
+                        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                        container.appendChild(confetti);
+
+                        setTimeout(() => confetti.remove(), 3000);
+                    }, i * 20);
+                }
+            }
+
+            togglePause() {
+                this.isPaused = !this.isPaused;
+                this.pauseBtn.textContent = this.isPaused ? '继续' : '暂停';
+
+                if (this.isPaused) {
+                    this.gameBoard.style.opacity = '0.5';
+                    this.gameBoard.style.pointerEvents = 'none';
+                    this.showMessage('游戏已暂停', 'error');
+                } else {
+                    this.gameBoard.style.opacity = '1';
+                    this.gameBoard.style.pointerEvents = 'auto';
+                    this.showMessage('继续游戏', 'success');
+                }
+            }
+
+            toggleSound() {
+                this.soundEnabled = !this.soundEnabled;
+                this.soundBtn.textContent = this.soundEnabled ? '🔊 音效开' : '🔇 音效关';
+            }
+
+            quitGame() {
+                if (confirm('确定要退出当前挑战吗？进度将不会保存。')) {
+                    this.restartGame();
+                }
+            }
+
+            restartGame() {
+                this.gameScreen.classList.add('hidden');
+                this.victoryScreen.classList.add('hidden');
+                this.welcomeScreen.classList.remove('hidden');
             }
 
             updateDisplay() {
                 this.scoreEl.textContent = this.score;
-                this.highScoreEl.textContent = this.highScore;
                 this.comboEl.textContent = this.combo;
                 this.correctCountEl.textContent = this.correctCount;
-                this.wrongCountEl.textContent = this.wrongCount;
-                this.maxComboEl.textContent = this.maxCombo;
-
-                const total = this.correctCount + this.wrongCount;
-                const accuracy = total > 0 ? Math.round((this.correctCount / total) * 100) : 0;
-                this.accuracyEl.textContent = accuracy + '%';
             }
 
             showMessage(text, type) {
@@ -482,11 +673,24 @@
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
                     oscillator.start(audioContext.currentTime);
                     oscillator.stop(audioContext.currentTime + 0.1);
+                } else if (type === 'victory') {
+                    const notes = [523.25, 587.33, 659.25, 783.99];
+                    notes.forEach((note, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.setValueAtTime(note, audioContext.currentTime + i * 0.15);
+                        gain.gain.setValueAtTime(0.3, audioContext.currentTime + i * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.15 + 0.3);
+                        osc.start(audioContext.currentTime + i * 0.15);
+                        osc.stop(audioContext.currentTime + i * 0.15 + 0.3);
+                    });
                 }
             }
         }
 
-        const game = new ColorGame();
+        const game = new ColorChallengeGame();
     </script>
 </body>
 </html>
