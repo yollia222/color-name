@@ -825,6 +825,7 @@
                 this.correctCount = 0;
                 this.wrongCount = 0;
                 this.elapsedTime = 0;
+                this.hintCount = 0; // 游戏开始时重置提示次数
                 this.startTimer();
                 this.startLevel();
                 this.playSound('start');
@@ -862,7 +863,7 @@
                 this.currentLevelEl.textContent = this.currentLevel;
                 this.subLevelEl.textContent = this.subLevel;
                 this.gridInfoEl.textContent = `${gridSize}×${gridSize}`;
-                this.hintCount = 0;
+                // 不在这里重置hintCount，提示次数在整个大关中共享
                 this.updateDisplay();
                 this.generateBoard();
                 this.showMessage(`第${this.currentLevel}关 - 小关${this.subLevel}`, 'success');
@@ -1081,6 +1082,7 @@
                 this.hideLevelCompleteDialog();
                 this.currentLevel++;
                 this.subLevel = 1;
+                this.hintCount = 0; // 进入新的大关时重置提示次数
                 setTimeout(() => this.startLevel(), 500);
             }
 
