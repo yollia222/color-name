@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找不同的色块</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .info-item {
+            background: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .info-item span {
+            color: #667eea;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #667eea;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .difficulty-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .game-board {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+            aspect-ratio: 1;
+        }
+
+        .color-block {
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 3px solid transparent;
+        }
+
+        .color-block:hover {
+            transform: scale(0.95);
+            border-color: white;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            height: 30px;
+            margin-bottom: 10px;
+        }
+
+        .success {
+            color: #4CAF50;
+        }
+
+        .error {
+            color: #f44336;
+        }
+
+        .stats {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .stats h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .pulse {
+            animation: pulse 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 找不同的色块</h1>
+
+        <div class="game-info">
+            <div class="info-item">得分: <span id="score">0</span></div>
+            <div class="info-item">最高分: <span id="highScore">0</span></div>
+            <div class="info-item">连击: <span id="combo">0</span></div>
+        </div>
+
+        <div class="difficulty-selector">
+            <button class="difficulty-btn" data-level="easy">简单 (3x3)</button>
+            <button class="difficulty-btn active" data-level="medium">中等 (4x4)</button>
+            <button class="difficulty-btn" data-level="hard">困难 (5x5)</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="startBtn">开始游戏</button>
+            <button class="btn btn-secondary" id="pauseBtn" disabled>暂停</button>
+            <button class="btn btn-secondary" id="soundBtn">🔊 音效开</button>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div class="game-board" id="gameBoard"></div>
+
+        <div class="stats">
+            <h3>📊 游戏统计</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">本局正确</div>
+                    <div class="stat-value" id="correctCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">本局错误</div>
+                    <div class="stat-value" id="wrongCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">正确率</div>
+                    <div class="stat-value" id="accuracy">0%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最高连击</div>
+                    <div class="stat-value" id="maxCombo">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ColorGame {
+            constructor() {
+                this.score = 0;
+                this.highScore = parseInt(localStorage.getItem('highScore')) || 0;
+                this.combo = 0;
+                this.maxCombo = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+                this.difficulty = 'medium';
+                this.gridSize = 4;
+                this.isPaused = false;
+                this.isPlaying = false;
+                this.soundEnabled = true;
+                this.differentBlockIndex = -1;
+
+                this.initElements();
+                this.initEventListeners();
+                this.updateDisplay();
+            }
+
+            initElements() {
+                this.gameBoard = document.getElementById('gameBoard');
+                this.scoreEl = document.getElementById('score');
+                this.highScoreEl = document.getElementById('highScore');
+                this.comboEl = document.getElementById('combo');
+                this.messageEl = document.getElementById('message');
+                this.startBtn = document.getElementById('startBtn');
+                this.pauseBtn = document.getElementById('pauseBtn');
+                this.soundBtn = document.getElementById('soundBtn');
+                this.correctCountEl = document.getElementById('correctCount');
+                this.wrongCountEl = document.getElementById('wrongCount');
+                this.accuracyEl = document.getElementById('accuracy');
+                this.maxComboEl = document.getElementById('maxCombo');
+            }
+
+            initEventListeners() {
+                this.startBtn.addEventListener('click', () => this.startGame());
+                this.pauseBtn.addEventListener('click', () => this.togglePause());
+                this.soundBtn.addEventListener('click', () => this.toggleSound());
+
+                document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.changeDifficulty(e.target));
+                });
+            }
+
+            changeDifficulty(btn) {
+                if (this.isPlaying) return;
+
+                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                this.difficulty = btn.dataset.level;
+                this.gridSize = this.difficulty === 'easy' ? 3 : this.difficulty === 'medium' ? 4 : 5;
+            }
+
+            startGame() {
+                this.isPlaying = true;
+                this.isPaused = false;
+                this.score = 0;
+                this.combo = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+                this.maxCombo = 0;
+
+                this.startBtn.textContent = '重新开始';
+                this.pauseBtn.disabled = false;
+
+                document.querySelectorAll('.difficulty-btn').forEach(btn => btn.disabled = true);
+
+                this.updateDisplay();
+                this.generateBoard();
+                this.showMessage('开始游戏！', 'success');
+                this.playSound('start');
+            }
+
+            togglePause() {
+                if (!this.isPlaying) return;
+
+                this.isPaused = !this.isPaused;
+                this.pauseBtn.textContent = this.isPaused ? '继续' : '暂停';
+
+                if (this.isPaused) {
+                    this.gameBoard.style.opacity = '0.5';
+                    this.gameBoard.style.pointerEvents = 'none';
+                    this.showMessage('游戏已暂停', 'error');
+                } else {
+                    this.gameBoard.style.opacity = '1';
+                    this.gameBoard.style.pointerEvents = 'auto';
+                    this.showMessage('继续游戏', 'success');
+                }
+            }
+
+            toggleSound() {
+                this.soundEnabled = !this.soundEnabled;
+                this.soundBtn.textContent = this.soundEnabled ? '🔊 音效开' : '🔇 音效关';
+            }
+
+            generateBoard() {
+                this.gameBoard.innerHTML = '';
+                this.gameBoard.style.gridTemplateColumns = `repeat(${this.gridSize}, 1fr)`;
+
+                const baseColor = this.getRandomColor();
+                const differentColor = this.getDifferentColor(baseColor);
+                this.differentBlockIndex = Math.floor(Math.random() * (this.gridSize * this.gridSize));
+
+                for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+                    const block = document.createElement('div');
+                    block.className = 'color-block';
+                    block.style.backgroundColor = i === this.differentBlockIndex ? differentColor : baseColor;
+                    block.addEventListener('click', () => this.handleBlockClick(i));
+                    this.gameBoard.appendChild(block);
+                }
+            }
+
+            getRandomColor() {
+                const hue = Math.floor(Math.random() * 360);
+                const saturation = 70 + Math.floor(Math.random() * 30);
+                const lightness = 50 + Math.floor(Math.random() * 20);
+                return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            }
+
+            getDifferentColor(baseColor) {
+                const match = baseColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+                if (!match) return baseColor;
+
+                let hue = parseInt(match[1]);
+                let saturation = parseInt(match[2]);
+                let lightness = parseInt(match[3]);
+
+                const difficulty = this.difficulty;
+                const difference = difficulty === 'easy' ? 30 : difficulty === 'medium' ? 15 : 8;
+
+                lightness += Math.random() > 0.5 ? difference : -difference;
+                lightness = Math.max(20, Math.min(90, lightness));
+
+                return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            }
+
+            handleBlockClick(index) {
+                if (!this.isPlaying || this.isPaused) return;
+
+                if (index === this.differentBlockIndex) {
+                    this.handleCorrect();
+                } else {
+                    this.handleWrong();
+                }
+            }
+
+            handleCorrect() {
+                this.correctCount++;
+                this.combo++;
+                this.maxCombo = Math.max(this.maxCombo, this.combo);
+
+                const points = 10 * (1 + this.combo * 0.5);
+                this.score += Math.floor(points);
+
+                if (this.score > this.highScore) {
+                    this.highScore = this.score;
+                    localStorage.setItem('highScore', this.highScore);
+                }
+
+                this.updateDisplay();
+                this.showMessage(`正确！+${Math.floor(points)}分`, 'success');
+                this.playSound('correct');
+
+                this.gameBoard.classList.add('pulse');
+                setTimeout(() => this.gameBoard.classList.remove('pulse'), 300);
+
+                setTimeout(() => this.generateBoard(), 500);
+            }
+
+            handleWrong() {
+                this.wrongCount++;
+                this.combo = 0;
+
+                this.updateDisplay();
+                this.showMessage('错误！连击中断', 'error');
+                this.playSound('wrong');
+            }
+
+            updateDisplay() {
+                this.scoreEl.textContent = this.score;
+                this.highScoreEl.textContent = this.highScore;
+                this.comboEl.textContent = this.combo;
+                this.correctCountEl.textContent = this.correctCount;
+                this.wrongCountEl.textContent = this.wrongCount;
+                this.maxComboEl.textContent = this.maxCombo;
+
+                const total = this.correctCount + this.wrongCount;
+                const accuracy = total > 0 ? Math.round((this.correctCount / total) * 100) : 0;
+                this.accuracyEl.textContent = accuracy + '%';
+            }
+
+            showMessage(text, type) {
+                this.messageEl.textContent = text;
+                this.messageEl.className = `message ${type}`;
+
+                setTimeout(() => {
+                    this.messageEl.textContent = '';
+                    this.messageEl.className = 'message';
+                }, 2000);
+            }
+
+            playSound(type) {
+                if (!this.soundEnabled) return;
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                if (type === 'correct') {
+                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                } else if (type === 'wrong') {
+                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(100, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                } else if (type === 'start') {
+                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                }
+            }
+        }
+
+        const game = new ColorGame();
+    </script>
+</body>
+</html>
