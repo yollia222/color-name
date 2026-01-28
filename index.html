@@ -682,7 +682,7 @@
     <div class="help-dialog" id="helpDialog">
         <div class="help-content">
             <h3>💡 需要帮助吗？</h3>
-            <p>是否显示提示？<br>（会扣除部分分数）</p>
+            <p id="helpDialogText">是否显示提示？<br>（会扣除部分分数）</p>
             <div class="help-buttons">
                 <button class="help-btn help-btn-yes" id="helpYes">是的</button>
                 <button class="help-btn help-btn-no" id="helpNo">不用了</button>
@@ -720,7 +720,8 @@
                 this.startTime = null;
                 this.elapsedTime = 0;
                 this.timerInterval = null;
-                this.hintUsed = false;
+                this.hintCount = 0;
+                this.maxHints = 3;
                 this.zoomLevel = 'medium';
 
                 this.initElements();
@@ -745,6 +746,7 @@
                 this.settingsIcon = document.getElementById('settingsIcon');
                 this.settingsDropdown = document.getElementById('settingsDropdown');
                 this.helpDialog = document.getElementById('helpDialog');
+                this.helpDialogText = document.getElementById('helpDialogText');
                 this.levelCompleteDialog = document.getElementById('levelCompleteDialog');
             }
 
@@ -860,7 +862,7 @@
                 this.currentLevelEl.textContent = this.currentLevel;
                 this.subLevelEl.textContent = this.subLevel;
                 this.gridInfoEl.textContent = `${gridSize}×${gridSize}`;
-                this.hintUsed = false;
+                this.hintCount = 0;
                 this.updateDisplay();
                 this.generateBoard();
                 this.showMessage(`第${this.currentLevel}关 - 小关${this.subLevel}`, 'success');
@@ -925,11 +927,8 @@
                 this.combo++;
                 this.maxCombo = Math.max(this.maxCombo, this.combo);
 
-                let points = 10 * this.currentLevel * (1 + this.combo * 0.2);
-                if (this.hintUsed) {
-                    points *= 0.5; // 使用提示扣除50%分数
-                }
-                this.score += Math.floor(points);
+                const points = 10;
+                this.score += points;
 
                 this.updateDisplay();
                 this.playSound('correct');
@@ -940,7 +939,7 @@
                 // 检查是否完成小关
                 if (this.subLevel < this.maxSubLevels) {
                     this.subLevel++;
-                    this.showMessage(`正确！+${Math.floor(points)}分`, 'success');
+                    this.showMessage(`正确！+${points}分`, 'success');
                     setTimeout(() => this.startLevel(), 800);
                 } else {
                     // 完成当前大关，显示确认对话框
@@ -1006,6 +1005,21 @@
             }
 
             showHelpDialog() {
+                if (this.hintCount >= this.maxHints) {
+                    this.showMessage('提示次数已用完！', 'error');
+                    return;
+                }
+
+                let dialogText = '';
+                if (this.hintCount === 0) {
+                    dialogText = '第1次提示：显示不同色块在哪一行<br>（扣除5分）';
+                } else if (this.hintCount === 1) {
+                    dialogText = '第2次提示：显示不同色块在哪一列<br>（扣除5分）';
+                } else if (this.hintCount === 2) {
+                    dialogText = '第3次提示：显示不同色块的行和列<br>（扣除10分）';
+                }
+
+                this.helpDialogText.innerHTML = dialogText;
                 this.helpDialog.classList.add('show');
                 this.isPaused = true;
             }
@@ -1017,14 +1031,34 @@
 
             provideHint() {
                 this.hideHelpDialog();
-                this.hintUsed = true;
 
                 const row = Math.floor(this.differentBlockIndex / this.gridSize) + 1;
                 const col = (this.differentBlockIndex % this.gridSize) + 1;
 
+                let hintText = '';
+                let deduction = 0;
+
+                if (this.hintCount === 0) {
+                    // 第一次提示：只显示行
+                    hintText = `💡 提示：不同的色块在第 ${row} 行`;
+                    deduction = 5;
+                } else if (this.hintCount === 1) {
+                    // 第二次提示：只显示列
+                    hintText = `💡 提示：不同的色块在第 ${col} 列`;
+                    deduction = 5;
+                } else if (this.hintCount === 2) {
+                    // 第三次提示：显示行和列
+                    hintText = `💡 提示：不同的色块在第 ${row} 行，第 ${col} 列`;
+                    deduction = 10;
+                }
+
+                this.hintCount++;
+                this.score = Math.max(0, this.score - deduction);
+                this.updateDisplay();
+
                 this.hintContainer.innerHTML = `
                     <div class="hint-message">
-                        💡 提示：不同的色块在第 ${row} 行，第 ${col} 列
+                        ${hintText} （-${deduction}分）
                     </div>
                 `;
 
