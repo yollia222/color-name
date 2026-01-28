@@ -53,7 +53,16 @@
         .welcome-screen h1 {
             color: #667eea;
             font-size: clamp(1.5em, 5vw, 2.5em);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .game-title {
+            font-size: clamp(2em, 6vw, 3.5em);
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .welcome-screen .subtitle {
@@ -340,10 +349,35 @@
         }
 
         .color-block {
-            border-radius: 8px;
+            border-radius: 50%;
             cursor: pointer;
             transition: all 0.2s;
             border: 2px solid transparent;
+            position: relative;
+        }
+
+        /* 猫耳朵 */
+        .color-block::before,
+        .color-block::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .color-block::before {
+            top: -8%;
+            left: 15%;
+            border-width: 0 8% 12% 8%;
+            border-color: transparent transparent currentColor transparent;
+        }
+
+        .color-block::after {
+            top: -8%;
+            right: 15%;
+            border-width: 0 8% 12% 8%;
+            border-color: transparent transparent currentColor transparent;
         }
 
         .color-block:hover {
@@ -579,7 +613,7 @@
     <div class="container">
         <!-- 欢迎页面 -->
         <div class="welcome-screen" id="welcomeScreen">
-            <h1>🎨 躲猫猫</h1>
+            <div class="game-title">🐱 躲猫猫 🐱</div>
             <p class="subtitle">挑战你的眼力和反应速度！</p>
 
             <div class="challenge-info">
@@ -662,10 +696,11 @@
 
         <!-- 通关页面 -->
         <div class="victory-screen hidden" id="victoryScreen">
-            <h1>🎉 恭喜通关！</h1>
+            <h1 id="victoryTitle">🎉 恭喜通关！</h1>
 
             <div class="stats-summary">
                 <h3>📊 挑战统计</h3>
+                <div class="stat" id="completionStatus"></div>
                 <div class="stat">总用时: <strong id="finalTime">0:00</strong></div>
                 <div class="stat">总得分: <strong id="finalScore">0</strong></div>
                 <div class="stat">正确次数: <strong id="finalCorrect">0</strong></div>
@@ -748,6 +783,8 @@
                 this.helpDialog = document.getElementById('helpDialog');
                 this.helpDialogText = document.getElementById('helpDialogText');
                 this.levelCompleteDialog = document.getElementById('levelCompleteDialog');
+                this.victoryTitle = document.getElementById('victoryTitle');
+                this.completionStatus = document.getElementById('completionStatus');
             }
 
             initEventListeners() {
@@ -885,7 +922,9 @@
                 for (let i = 0; i < this.gridSize * this.gridSize; i++) {
                     const block = document.createElement('div');
                     block.className = 'color-block';
-                    block.style.backgroundColor = i === this.differentBlockIndex ? differentColor : baseColor;
+                    const blockColor = i === this.differentBlockIndex ? differentColor : baseColor;
+                    block.style.backgroundColor = blockColor;
+                    block.style.color = blockColor; // 设置color属性用于耳朵颜色
                     block.addEventListener('click', () => this.handleBlockClick(i));
                     this.gameBoard.appendChild(block);
                 }
@@ -967,6 +1006,20 @@
                 this.stopTimer();
                 this.gameScreen.classList.add('hidden');
                 this.victoryScreen.classList.remove('hidden');
+
+                // 计算完成的关卡数
+                const completedLevels = (this.currentLevel - 1) * this.maxSubLevels + this.subLevel;
+                const totalLevels = this.maxLevel * this.maxSubLevels;
+                const isFullyCompleted = this.currentLevel === this.maxLevel && this.subLevel === this.maxSubLevels;
+
+                // 设置标题和完成状态
+                if (isFullyCompleted) {
+                    this.victoryTitle.textContent = '🎉 您完美通关！';
+                    this.completionStatus.innerHTML = '<strong style="color: #667eea; font-size: 1.2em;">恭喜您完成全部7关35个小关卡！</strong>';
+                } else {
+                    this.victoryTitle.textContent = '🎉 挑战结束！';
+                    this.completionStatus.innerHTML = `您已完成 <strong style="color: #667eea;">${completedLevels}</strong> 个小关卡！`;
+                }
 
                 const minutes = Math.floor(this.elapsedTime / 60);
                 const seconds = this.elapsedTime % 60;
