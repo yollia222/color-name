@@ -340,13 +340,13 @@
 
         .game-board {
             display: grid;
-            gap: clamp(5px, 1.2vw, 10px);
+            gap: clamp(6px, 1.5vw, 12px);
             margin-bottom: 6px;
             aspect-ratio: 1;
             width: 100%;
-            max-width: min(500px, 85vw);
+            max-width: min(480px, 82vw);
             flex-shrink: 0;
-            padding: 5%;
+            padding: 3%;
         }
 
         .color-block {
@@ -368,16 +368,16 @@
         }
 
         .color-block::before {
-            top: 2%;
-            left: 25%;
-            border-width: 0 5% 8% 5%;
+            top: 0;
+            left: 22%;
+            border-width: 0 7% 12% 7%;
             border-color: transparent transparent currentColor transparent;
         }
 
         .color-block::after {
-            top: 2%;
-            right: 25%;
-            border-width: 0 5% 8% 5%;
+            top: 0;
+            right: 22%;
+            border-width: 0 7% 12% 7%;
             border-color: transparent transparent currentColor transparent;
         }
 
