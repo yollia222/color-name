@@ -752,6 +752,7 @@
                 this.maxCombo = 0;
                 this.correctCount = 0;
                 this.wrongCount = 0;
+                this.currentSubLevelWrongs = 0;
                 this.isPaused = false;
                 this.soundEnabled = true;
                 this.differentBlockIndex = -1;
@@ -903,6 +904,7 @@
                 this.currentLevelEl.textContent = this.currentLevel;
                 this.subLevelEl.textContent = this.subLevel;
                 this.gridInfoEl.textContent = `${gridSize}×${gridSize}`;
+                this.currentSubLevelWrongs = 0; // 重置当前小关的错误次数
                 // 不在这里重置hintCount，提示次数在整个大关中共享
                 this.updateDisplay();
                 this.generateBoard();
@@ -999,9 +1001,20 @@
 
             handleWrong() {
                 this.wrongCount++;
+                this.currentSubLevelWrongs++;
                 this.combo = 0;
-                this.updateDisplay();
-                this.showMessage('错误！再试一次', 'error');
+
+                // 从第三次错误开始扣分
+                if (this.currentSubLevelWrongs >= 3) {
+                    const deduction = 3;
+                    this.score = Math.max(0, this.score - deduction);
+                    this.updateDisplay();
+                    this.showMessage(`错误！-${deduction}分（本关第${this.currentSubLevelWrongs}次错误）`, 'error');
+                } else {
+                    this.updateDisplay();
+                    this.showMessage(`错误！再试一次（本关第${this.currentSubLevelWrongs}次错误）`, 'error');
+                }
+
                 this.playSound('wrong');
             }
 
