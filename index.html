@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>找不同的色块 - 挑战模式</title>
+    <title>躲猫猫 - 挑战模式</title>
     <style>
         * {
             margin: 0;
@@ -579,7 +579,7 @@
     <div class="container">
         <!-- 欢迎页面 -->
         <div class="welcome-screen" id="welcomeScreen">
-            <h1>🎨 找不同的色块</h1>
+            <h1>🎨 躲猫猫</h1>
             <p class="subtitle">挑战你的眼力和反应速度！</p>
 
             <div class="challenge-info">
@@ -623,7 +623,7 @@
                 </div>
             </div>
 
-            <h1>🎨 找不同的色块</h1>
+            <h1>🎨 躲猫猫</h1>
 
             <!-- 主内容区域 -->
             <div class="game-content">
@@ -690,6 +690,18 @@
         </div>
     </div>
 
+    <!-- 关卡完成确认对话框 -->
+    <div class="help-dialog" id="levelCompleteDialog">
+        <div class="help-content">
+            <h3>🎉 恭喜完成本关！</h3>
+            <p>是否继续挑战下一关？</p>
+            <div class="help-buttons">
+                <button class="help-btn help-btn-yes" id="continueYes">是</button>
+                <button class="help-btn help-btn-no" id="continueNo">否</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         class ColorChallengeGame {
             constructor() {
@@ -733,6 +745,7 @@
                 this.settingsIcon = document.getElementById('settingsIcon');
                 this.settingsDropdown = document.getElementById('settingsDropdown');
                 this.helpDialog = document.getElementById('helpDialog');
+                this.levelCompleteDialog = document.getElementById('levelCompleteDialog');
             }
 
             initEventListeners() {
@@ -741,6 +754,8 @@
                 const helpBtn = document.getElementById('helpBtn');
                 const helpYes = document.getElementById('helpYes');
                 const helpNo = document.getElementById('helpNo');
+                const continueYes = document.getElementById('continueYes');
+                const continueNo = document.getElementById('continueNo');
                 const soundToggle = document.getElementById('soundToggle');
                 const pauseToggle = document.getElementById('pauseToggle');
                 const quitGame = document.getElementById('quitGame');
@@ -763,6 +778,12 @@
                 }
                 if (zoomBtn) {
                     zoomBtn.addEventListener('click', () => this.toggleZoom());
+                }
+                if (continueYes) {
+                    continueYes.addEventListener('click', () => this.continueToNextLevel());
+                }
+                if (continueNo) {
+                    continueNo.addEventListener('click', () => this.declineContinue());
                 }
 
                 // 设置菜单
@@ -922,12 +943,10 @@
                     this.showMessage(`正确！+${Math.floor(points)}分`, 'success');
                     setTimeout(() => this.startLevel(), 800);
                 } else {
-                    // 完成当前大关，进入下一大关
+                    // 完成当前大关，显示确认对话框
                     if (this.currentLevel < this.maxLevel) {
-                        this.currentLevel++;
-                        this.subLevel = 1;
-                        this.showMessage(`第${this.currentLevel - 1}关完成！`, 'success');
-                        setTimeout(() => this.startLevel(), 1500);
+                        this.showMessage(`第${this.currentLevel}关完成！`, 'success');
+                        setTimeout(() => this.showLevelCompleteDialog(), 1000);
                     } else {
                         // 全部通关
                         this.showMessage('全部完成！', 'success');
@@ -1012,6 +1031,29 @@
                 setTimeout(() => {
                     this.hintContainer.innerHTML = '';
                 }, 5000);
+            }
+
+            showLevelCompleteDialog() {
+                this.levelCompleteDialog.classList.add('show');
+                this.isPaused = true;
+            }
+
+            hideLevelCompleteDialog() {
+                this.levelCompleteDialog.classList.remove('show');
+                this.isPaused = false;
+            }
+
+            continueToNextLevel() {
+                this.hideLevelCompleteDialog();
+                this.currentLevel++;
+                this.subLevel = 1;
+                setTimeout(() => this.startLevel(), 500);
+            }
+
+            declineContinue() {
+                this.hideLevelCompleteDialog();
+                this.showMessage('挑战结束！', 'success');
+                setTimeout(() => this.showVictory(), 1000);
             }
 
             togglePause() {
