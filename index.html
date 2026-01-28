@@ -18,37 +18,46 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
-            overflow: hidden;
+            padding: 10px;
+            overflow-x: hidden;
         }
 
         .container {
             background: white;
             border-radius: 20px;
-            padding: 30px;
+            padding: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 700px;
+            max-width: 900px;
             width: 100%;
             position: relative;
-            z-index: 1;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                max-height: 98vh;
+            }
         }
 
         /* 欢迎页面 */
         .welcome-screen {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
         }
 
         .welcome-screen h1 {
             color: #667eea;
-            font-size: 2.5em;
+            font-size: clamp(1.5em, 5vw, 2.5em);
             margin-bottom: 20px;
         }
 
         .welcome-screen .subtitle {
-            font-size: 1.2em;
+            font-size: clamp(1em, 3vw, 1.2em);
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             line-height: 1.6;
         }
 
@@ -56,7 +65,7 @@
             background: #f9f9f9;
             padding: 20px;
             border-radius: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .challenge-info h3 {
@@ -78,8 +87,8 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 20px 60px;
-            font-size: 1.5em;
+            padding: 15px 50px;
+            font-size: clamp(1em, 3vw, 1.5em);
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
@@ -97,112 +106,148 @@
             display: block;
         }
 
+        /* 设置菜单 */
+        .settings-menu {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .settings-icon {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .settings-icon:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+        }
+
+        .settings-icon::before {
+            content: '⚙';
+            color: white;
+            font-size: 24px;
+        }
+
+        .settings-dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            min-width: 150px;
+            overflow: hidden;
+        }
+
+        .settings-dropdown.show {
+            display: block;
+        }
+
+        .settings-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:hover {
+            background: #f5f5f5;
+        }
+
         h1 {
             text-align: center;
             color: #667eea;
-            margin-bottom: 20px;
-            font-size: 2em;
+            margin-bottom: 15px;
+            font-size: clamp(1.3em, 4vw, 2em);
         }
 
         .level-info {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px;
+            padding: 12px;
             border-radius: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: center;
         }
 
         .level-info h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
+            font-size: clamp(1em, 3vw, 1.3em);
+            margin-bottom: 5px;
         }
 
-        .level-progress {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-            margin-top: 10px;
+        .level-info .sub-level {
+            font-size: clamp(0.9em, 2.5vw, 1em);
+            opacity: 0.9;
         }
 
-        .level-dot {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8em;
+        /* 游戏信息面板 */
+        .game-info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .info-card {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: clamp(0.75em, 2vw, 0.85em);
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: clamp(1.1em, 3vw, 1.3em);
             font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .level-dot.completed {
-            background: #4CAF50;
-        }
-
-        .level-dot.current {
-            background: white;
             color: #667eea;
-            transform: scale(1.3);
         }
 
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .info-item {
-            background: #f0f0f0;
+        /* 操作按钮 */
+        .action-btn {
+            background: #667eea;
+            color: white;
+            border: none;
             padding: 10px 20px;
             border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-
-        .info-item span {
-            color: #667eea;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1em;
+            font-size: clamp(0.85em, 2.5vw, 1em);
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            min-width: 120px;
+            margin-bottom: 15px;
+            width: 100%;
         }
 
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
+        .action-btn:hover {
+            background: #5568d3;
             transform: translateY(-2px);
         }
 
         .game-board {
             display: grid;
-            gap: 8px;
-            margin-bottom: 20px;
+            gap: clamp(4px, 1vw, 8px);
+            margin-bottom: 15px;
             aspect-ratio: 1;
-            max-width: 600px;
+            max-width: min(600px, 90vw);
             margin-left: auto;
             margin-right: auto;
         }
@@ -211,7 +256,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
-            border: 3px solid transparent;
+            border: 2px solid transparent;
         }
 
         .color-block:hover {
@@ -221,9 +266,9 @@
 
         .message {
             text-align: center;
-            font-size: 1.2em;
+            font-size: clamp(0.9em, 2.5vw, 1.1em);
             font-weight: bold;
-            height: 30px;
+            min-height: 25px;
             margin-bottom: 10px;
         }
 
@@ -239,12 +284,12 @@
         .victory-screen {
             display: block;
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
         }
 
         .victory-screen h1 {
             color: #667eea;
-            font-size: 3em;
+            font-size: clamp(1.8em, 5vw, 3em);
             margin-bottom: 20px;
             animation: bounce 1s ease infinite;
         }
@@ -262,7 +307,7 @@
         }
 
         .stats-summary .stat {
-            font-size: 1.2em;
+            font-size: clamp(1em, 2.5vw, 1.2em);
             margin: 10px 0;
             color: #555;
         }
@@ -275,8 +320,8 @@
             background: #667eea;
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.2em;
+            padding: 12px 35px;
+            font-size: clamp(1em, 2.5vw, 1.2em);
             font-weight: bold;
             border-radius: 25px;
             cursor: pointer;
@@ -295,7 +340,6 @@
             width: 10px;
             height: 10px;
             background: #f0f;
-            position: absolute;
             animation: confetti-fall 3s linear forwards;
             z-index: 9999;
         }
@@ -321,9 +365,90 @@
             animation: pulse 0.3s ease;
         }
 
-        /* 隐藏类 */
         .hidden {
             display: none !important;
+        }
+
+        /* 帮助对话框 */
+        .help-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .help-dialog.show {
+            display: flex;
+        }
+
+        .help-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .help-content h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: clamp(1.1em, 3vw, 1.3em);
+        }
+
+        .help-content p {
+            margin-bottom: 20px;
+            color: #666;
+            font-size: clamp(0.9em, 2.5vw, 1em);
+        }
+
+        .help-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .help-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: clamp(0.9em, 2.5vw, 1em);
+        }
+
+        .help-btn-yes {
+            background: #667eea;
+            color: white;
+        }
+
+        .help-btn-yes:hover {
+            background: #5568d3;
+        }
+
+        .help-btn-no {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .help-btn-no:hover {
+            background: #e0e0e0;
+        }
+
+        .hint-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -337,11 +462,11 @@
             <div class="challenge-info">
                 <h3>🎯 挑战规则</h3>
                 <ul>
-                    <li>从第1关（4×4）开始挑战</li>
-                    <li>每通过一关，网格增加一行一列</li>
-                    <li>一直挑战到第7关（10×10）</li>
+                    <li>从第1关开始挑战</li>
+                    <li>每关包含5个小关卡</li>
+                    <li>每关网格会逐渐增大</li>
                     <li>找出颜色不同的色块即可过关</li>
-                    <li>完成全部关卡即为通关！</li>
+                    <li>完成所有关卡即为通关！</li>
                 </ul>
             </div>
 
@@ -350,26 +475,47 @@
 
         <!-- 游戏页面 -->
         <div class="game-screen hidden" id="gameScreen">
+            <!-- 设置菜单 -->
+            <div class="settings-menu">
+                <div class="settings-icon" id="settingsIcon"></div>
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <div class="settings-item" id="soundToggle">🔊 音效: 开</div>
+                    <div class="settings-item" id="pauseToggle">⏸ 暂停游戏</div>
+                    <div class="settings-item" id="quitGame">🚪 退出游戏</div>
+                </div>
+            </div>
+
             <h1>🎨 找不同的色块</h1>
 
             <div class="level-info">
                 <h2>第 <span id="currentLevel">1</span> 关 - <span id="gridInfo">4×4</span></h2>
-                <div class="level-progress" id="levelProgress"></div>
+                <div class="sub-level">小关: <span id="subLevel">1</span>/5</div>
             </div>
 
-            <div class="game-info">
-                <div class="info-item">得分: <span id="score">0</span></div>
-                <div class="info-item">连击: <span id="combo">0</span></div>
-                <div class="info-item">正确: <span id="correctCount">0</span></div>
+            <!-- 游戏信息面板 -->
+            <div class="game-info-panel">
+                <div class="info-card">
+                    <div class="info-label">用时</div>
+                    <div class="info-value" id="timeDisplay">0:00</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">得分</div>
+                    <div class="info-value" id="score">0</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">连击</div>
+                    <div class="info-value" id="combo">0</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">正确率</div>
+                    <div class="info-value" id="accuracy">100%</div>
+                </div>
             </div>
 
-            <div class="controls">
-                <button class="btn btn-secondary" id="pauseBtn">暂停</button>
-                <button class="btn btn-secondary" id="soundBtn">🔊 音效开</button>
-                <button class="btn btn-secondary" id="quitBtn">退出</button>
-            </div>
+            <button class="action-btn" id="helpBtn">💡 帮助</button>
 
             <div class="message" id="message"></div>
+            <div id="hintContainer"></div>
 
             <div class="game-board" id="gameBoard"></div>
         </div>
@@ -380,6 +526,7 @@
 
             <div class="stats-summary">
                 <h3>📊 挑战统计</h3>
+                <div class="stat">总用时: <strong id="finalTime">0:00</strong></div>
                 <div class="stat">总得分: <strong id="finalScore">0</strong></div>
                 <div class="stat">正确次数: <strong id="finalCorrect">0</strong></div>
                 <div class="stat">错误次数: <strong id="finalWrong">0</strong></div>
@@ -391,10 +538,24 @@
         </div>
     </div>
 
+    <!-- 帮助对话框 -->
+    <div class="help-dialog" id="helpDialog">
+        <div class="help-content">
+            <h3>💡 需要帮助吗？</h3>
+            <p>是否显示提示？<br>（会扣除部分分数）</p>
+            <div class="help-buttons">
+                <button class="help-btn help-btn-yes" id="helpYes">是的</button>
+                <button class="help-btn help-btn-no" id="helpNo">不用了</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         class ColorChallengeGame {
             constructor() {
                 this.currentLevel = 1;
+                this.subLevel = 1;
+                this.maxSubLevels = 5;
                 this.maxLevel = 7;
                 this.score = 0;
                 this.combo = 0;
@@ -404,6 +565,10 @@
                 this.isPaused = false;
                 this.soundEnabled = true;
                 this.differentBlockIndex = -1;
+                this.startTime = null;
+                this.elapsedTime = 0;
+                this.timerInterval = null;
+                this.hintUsed = false;
 
                 this.initElements();
                 this.initEventListeners();
@@ -417,77 +582,127 @@
                 this.scoreEl = document.getElementById('score');
                 this.comboEl = document.getElementById('combo');
                 this.messageEl = document.getElementById('message');
-                this.pauseBtn = document.getElementById('pauseBtn');
-                this.soundBtn = document.getElementById('soundBtn');
-                this.quitBtn = document.getElementById('quitBtn');
                 this.correctCountEl = document.getElementById('correctCount');
                 this.currentLevelEl = document.getElementById('currentLevel');
+                this.subLevelEl = document.getElementById('subLevel');
                 this.gridInfoEl = document.getElementById('gridInfo');
-                this.levelProgressEl = document.getElementById('levelProgress');
+                this.timeDisplayEl = document.getElementById('timeDisplay');
+                this.accuracyEl = document.getElementById('accuracy');
+                this.hintContainer = document.getElementById('hintContainer');
+                this.settingsIcon = document.getElementById('settingsIcon');
+                this.settingsDropdown = document.getElementById('settingsDropdown');
+                this.helpDialog = document.getElementById('helpDialog');
             }
 
             initEventListeners() {
                 const acceptBtn = document.getElementById('acceptChallengeBtn');
                 const restartBtn = document.getElementById('restartBtn');
+                const helpBtn = document.getElementById('helpBtn');
+                const helpYes = document.getElementById('helpYes');
+                const helpNo = document.getElementById('helpNo');
+                const soundToggle = document.getElementById('soundToggle');
+                const pauseToggle = document.getElementById('pauseToggle');
+                const quitGame = document.getElementById('quitGame');
 
                 if (acceptBtn) {
                     acceptBtn.addEventListener('click', () => this.startChallenge());
                 }
-                if (this.pauseBtn) {
-                    this.pauseBtn.addEventListener('click', () => this.togglePause());
-                }
-                if (this.soundBtn) {
-                    this.soundBtn.addEventListener('click', () => this.toggleSound());
-                }
-                if (this.quitBtn) {
-                    this.quitBtn.addEventListener('click', () => this.quitGame());
-                }
                 if (restartBtn) {
                     restartBtn.addEventListener('click', () => this.restartGame());
                 }
+                if (helpBtn) {
+                    helpBtn.addEventListener('click', () => this.showHelpDialog());
+                }
+                if (helpYes) {
+                    helpYes.addEventListener('click', () => this.provideHint());
+                }
+                if (helpNo) {
+                    helpNo.addEventListener('click', () => this.hideHelpDialog());
+                }
+
+                // 设置菜单
+                this.settingsIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.settingsDropdown.classList.toggle('show');
+                });
+
+                document.addEventListener('click', () => {
+                    this.settingsDropdown.classList.remove('show');
+                });
+
+                soundToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleSound();
+                });
+
+                pauseToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.togglePause();
+                });
+
+                quitGame.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.quitGameConfirm();
+                });
             }
 
             startChallenge() {
                 this.welcomeScreen.classList.add('hidden');
                 this.gameScreen.classList.remove('hidden');
                 this.currentLevel = 1;
+                this.subLevel = 1;
                 this.score = 0;
                 this.combo = 0;
                 this.maxCombo = 0;
                 this.correctCount = 0;
                 this.wrongCount = 0;
-                this.updateLevelProgress();
+                this.elapsedTime = 0;
+                this.startTimer();
                 this.startLevel();
                 this.playSound('start');
+            }
+
+            startTimer() {
+                this.startTime = Date.now() - this.elapsedTime * 1000;
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
+                this.timerInterval = setInterval(() => {
+                    if (!this.isPaused) {
+                        this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
+                        this.updateTimeDisplay();
+                    }
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            updateTimeDisplay() {
+                const minutes = Math.floor(this.elapsedTime / 60);
+                const seconds = this.elapsedTime % 60;
+                this.timeDisplayEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             }
 
             startLevel() {
                 const gridSize = 3 + this.currentLevel;
                 this.gridSize = gridSize;
                 this.currentLevelEl.textContent = this.currentLevel;
+                this.subLevelEl.textContent = this.subLevel;
                 this.gridInfoEl.textContent = `${gridSize}×${gridSize}`;
+                this.hintUsed = false;
                 this.updateDisplay();
                 this.generateBoard();
-                this.showMessage(`第${this.currentLevel}关开始！`, 'success');
-            }
-
-            updateLevelProgress() {
-                this.levelProgressEl.innerHTML = '';
-                for (let i = 1; i <= this.maxLevel; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = 'level-dot';
-                    dot.textContent = i;
-                    if (i < this.currentLevel) {
-                        dot.classList.add('completed');
-                    } else if (i === this.currentLevel) {
-                        dot.classList.add('current');
-                    }
-                    this.levelProgressEl.appendChild(dot);
-                }
+                this.showMessage(`第${this.currentLevel}关 - 小关${this.subLevel}`, 'success');
             }
 
             generateBoard() {
                 this.gameBoard.innerHTML = '';
+                this.hintContainer.innerHTML = '';
                 this.gameBoard.style.gridTemplateColumns = `repeat(${this.gridSize}, 1fr)`;
 
                 const baseColor = this.getRandomColor();
@@ -540,7 +755,10 @@
                 this.combo++;
                 this.maxCombo = Math.max(this.maxCombo, this.combo);
 
-                const points = 10 * this.currentLevel * (1 + this.combo * 0.2);
+                let points = 10 * this.currentLevel * (1 + this.combo * 0.2);
+                if (this.hintUsed) {
+                    points *= 0.5; // 使用提示扣除50%分数
+                }
                 this.score += Math.floor(points);
 
                 this.updateDisplay();
@@ -549,16 +767,23 @@
                 this.gameBoard.classList.add('pulse');
                 setTimeout(() => this.gameBoard.classList.remove('pulse'), 300);
 
-                if (this.currentLevel < this.maxLevel) {
+                // 检查是否完成小关
+                if (this.subLevel < this.maxSubLevels) {
+                    this.subLevel++;
                     this.showMessage(`正确！+${Math.floor(points)}分`, 'success');
-                    setTimeout(() => {
-                        this.currentLevel++;
-                        this.updateLevelProgress();
-                        this.startLevel();
-                    }, 800);
+                    setTimeout(() => this.startLevel(), 800);
                 } else {
-                    this.showMessage('恭喜通关！', 'success');
-                    setTimeout(() => this.showVictory(), 1000);
+                    // 完成当前大关，进入下一大关
+                    if (this.currentLevel < this.maxLevel) {
+                        this.currentLevel++;
+                        this.subLevel = 1;
+                        this.showMessage(`第${this.currentLevel - 1}关完成！`, 'success');
+                        setTimeout(() => this.startLevel(), 1500);
+                    } else {
+                        // 全部通关
+                        this.showMessage('全部完成！', 'success');
+                        setTimeout(() => this.showVictory(), 1000);
+                    }
                 }
             }
 
@@ -571,9 +796,13 @@
             }
 
             showVictory() {
+                this.stopTimer();
                 this.gameScreen.classList.add('hidden');
                 this.victoryScreen.classList.remove('hidden');
 
+                const minutes = Math.floor(this.elapsedTime / 60);
+                const seconds = this.elapsedTime % 60;
+                document.getElementById('finalTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 document.getElementById('finalScore').textContent = this.score;
                 document.getElementById('finalCorrect').textContent = this.correctCount;
                 document.getElementById('finalWrong').textContent = this.wrongCount;
@@ -608,9 +837,38 @@
                 }
             }
 
+            showHelpDialog() {
+                this.helpDialog.classList.add('show');
+                this.isPaused = true;
+            }
+
+            hideHelpDialog() {
+                this.helpDialog.classList.remove('show');
+                this.isPaused = false;
+            }
+
+            provideHint() {
+                this.hideHelpDialog();
+                this.hintUsed = true;
+
+                const row = Math.floor(this.differentBlockIndex / this.gridSize) + 1;
+                const col = (this.differentBlockIndex % this.gridSize) + 1;
+
+                this.hintContainer.innerHTML = `
+                    <div class="hint-message">
+                        💡 提示：不同的色块在第 ${row} 行，第 ${col} 列
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    this.hintContainer.innerHTML = '';
+                }, 5000);
+            }
+
             togglePause() {
                 this.isPaused = !this.isPaused;
-                this.pauseBtn.textContent = this.isPaused ? '继续' : '暂停';
+                const pauseToggle = document.getElementById('pauseToggle');
+                pauseToggle.textContent = this.isPaused ? '▶ 继续游戏' : '⏸ 暂停游戏';
 
                 if (this.isPaused) {
                     this.gameBoard.style.opacity = '0.5';
@@ -625,16 +883,19 @@
 
             toggleSound() {
                 this.soundEnabled = !this.soundEnabled;
-                this.soundBtn.textContent = this.soundEnabled ? '🔊 音效开' : '🔇 音效关';
+                const soundToggle = document.getElementById('soundToggle');
+                soundToggle.textContent = this.soundEnabled ? '🔊 音效: 开' : '🔇 音效: 关';
             }
 
-            quitGame() {
+            quitGameConfirm() {
                 if (confirm('确定要退出当前挑战吗？进度将不会保存。')) {
+                    this.stopTimer();
                     this.restartGame();
                 }
             }
 
             restartGame() {
+                this.stopTimer();
                 this.gameScreen.classList.add('hidden');
                 this.victoryScreen.classList.add('hidden');
                 this.welcomeScreen.classList.remove('hidden');
@@ -643,7 +904,10 @@
             updateDisplay() {
                 this.scoreEl.textContent = this.score;
                 this.comboEl.textContent = this.combo;
-                this.correctCountEl.textContent = this.correctCount;
+
+                const total = this.correctCount + this.wrongCount;
+                const accuracy = total > 0 ? Math.round((this.correctCount / total) * 100) : 100;
+                this.accuracyEl.textContent = accuracy + '%';
             }
 
             showMessage(text, type) {
@@ -703,7 +967,6 @@
             }
         }
 
-        // 等待DOM加载完成后再初始化游戏
         document.addEventListener('DOMContentLoaded', function() {
             const game = new ColorChallengeGame();
         });
