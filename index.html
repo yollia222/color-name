@@ -282,6 +282,48 @@
             transform: scale(1.1);
         }
 
+        /* 缩放按钮 */
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border: none;
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+
+        .zoom-btn:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 缩放尺寸 */
+        .game-board.size-small {
+            max-width: min(400px, 80vw);
+        }
+
+        .game-board.size-medium {
+            max-width: min(550px, 90vw);
+        }
+
+        .game-board.size-large {
+            max-width: min(700px, 95vw);
+        }
+
         /* 操作按钮 - 隐藏原来的帮助按钮 */
         .action-btn {
             display: none;
@@ -574,8 +616,11 @@
                     <span class="sub-level">小关: <span id="subLevel">1</span>/5</span>
                 </div>
 
-                <!-- 帮助按钮 -->
-                <button class="help-btn-header" id="helpBtn">💡</button>
+                <!-- 右侧控制按钮 -->
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoomBtn" title="缩放">🔍</button>
+                    <button class="help-btn-header" id="helpBtn" title="帮助">💡</button>
+                </div>
             </div>
 
             <h1>🎨 找不同的色块</h1>
@@ -664,6 +709,7 @@
                 this.elapsedTime = 0;
                 this.timerInterval = null;
                 this.hintUsed = false;
+                this.zoomLevel = 'medium';
 
                 this.initElements();
                 this.initEventListeners();
@@ -698,6 +744,7 @@
                 const soundToggle = document.getElementById('soundToggle');
                 const pauseToggle = document.getElementById('pauseToggle');
                 const quitGame = document.getElementById('quitGame');
+                const zoomBtn = document.getElementById('zoomBtn');
 
                 if (acceptBtn) {
                     acceptBtn.addEventListener('click', () => this.startChallenge());
@@ -713,6 +760,9 @@
                 }
                 if (helpNo) {
                     helpNo.addEventListener('click', () => this.hideHelpDialog());
+                }
+                if (zoomBtn) {
+                    zoomBtn.addEventListener('click', () => this.toggleZoom());
                 }
 
                 // 设置菜单
@@ -799,6 +849,10 @@
                 this.gameBoard.innerHTML = '';
                 this.hintContainer.innerHTML = '';
                 this.gameBoard.style.gridTemplateColumns = `repeat(${this.gridSize}, 1fr)`;
+
+                // 确保应用当前的缩放级别
+                this.gameBoard.classList.remove('size-small', 'size-medium', 'size-large');
+                this.gameBoard.classList.add(`size-${this.zoomLevel}`);
 
                 const baseColor = this.getRandomColor();
                 const differentColor = this.getDifferentColor(baseColor);
@@ -980,6 +1034,26 @@
                 this.soundEnabled = !this.soundEnabled;
                 const soundToggle = document.getElementById('soundToggle');
                 soundToggle.textContent = this.soundEnabled ? '🔊 音效: 开' : '🔇 音效: 关';
+            }
+
+            toggleZoom() {
+                const zoomLevels = ['small', 'medium', 'large'];
+                const currentIndex = zoomLevels.indexOf(this.zoomLevel);
+                const nextIndex = (currentIndex + 1) % zoomLevels.length;
+                this.zoomLevel = zoomLevels[nextIndex];
+
+                // 移除所有尺寸类
+                this.gameBoard.classList.remove('size-small', 'size-medium', 'size-large');
+                // 添加新的尺寸类
+                this.gameBoard.classList.add(`size-${this.zoomLevel}`);
+
+                // 显示提示
+                const sizeText = {
+                    'small': '小',
+                    'medium': '中',
+                    'large': '大'
+                };
+                this.showMessage(`缩放: ${sizeText[this.zoomLevel]}`, 'success');
             }
 
             quitGameConfirm() {
