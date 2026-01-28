@@ -427,11 +427,24 @@
             }
 
             initEventListeners() {
-                document.getElementById('acceptChallengeBtn').addEventListener('click', () => this.startChallenge());
-                this.pauseBtn.addEventListener('click', () => this.togglePause());
-                this.soundBtn.addEventListener('click', () => this.toggleSound());
-                this.quitBtn.addEventListener('click', () => this.quitGame());
-                document.getElementById('restartBtn').addEventListener('click', () => this.restartGame());
+                const acceptBtn = document.getElementById('acceptChallengeBtn');
+                const restartBtn = document.getElementById('restartBtn');
+
+                if (acceptBtn) {
+                    acceptBtn.addEventListener('click', () => this.startChallenge());
+                }
+                if (this.pauseBtn) {
+                    this.pauseBtn.addEventListener('click', () => this.togglePause());
+                }
+                if (this.soundBtn) {
+                    this.soundBtn.addEventListener('click', () => this.toggleSound());
+                }
+                if (this.quitBtn) {
+                    this.quitBtn.addEventListener('click', () => this.quitGame());
+                }
+                if (restartBtn) {
+                    restartBtn.addEventListener('click', () => this.restartGame());
+                }
             }
 
             startChallenge() {
