@@ -111,19 +111,39 @@
             overflow: hidden;
         }
 
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
         .game-content {
             flex: 1;
             display: flex;
-            flex-direction: column;
+            gap: 10px;
             min-height: 0;
         }
 
-        /* 设置菜单 */
-        .settings-menu {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
+        .game-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .game-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 0;
+        }
+
+        h1 {
+            display: none;
         }
 
         .settings-icon {
@@ -150,16 +170,23 @@
             font-size: 24px;
         }
 
+        /* 设置菜单 */
+        .settings-menu {
+            position: relative;
+            z-index: 100;
+        }
+
         .settings-dropdown {
             display: none;
             position: absolute;
-            top: 50px;
+            top: 45px;
             left: 0;
             background: white;
             border-radius: 10px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
             min-width: 150px;
             overflow: hidden;
+            z-index: 101;
         }
 
         .settings-dropdown.show {
@@ -181,87 +208,92 @@
             background: #f5f5f5;
         }
 
-        h1 {
-            text-align: center;
-            color: #667eea;
-            margin-bottom: 8px;
-            font-size: clamp(1.2em, 3.5vw, 1.6em);
-        }
 
         .level-info {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 8px;
-            border-radius: 10px;
-            margin-bottom: 8px;
+            padding: 6px 12px;
+            border-radius: 8px;
             text-align: center;
+            flex: 1;
+            margin: 0 10px;
         }
 
         .level-info h2 {
-            font-size: clamp(0.9em, 2.5vw, 1.1em);
-            margin-bottom: 3px;
+            font-size: clamp(0.85em, 2vw, 1em);
+            margin: 0;
+            display: inline;
         }
 
         .level-info .sub-level {
-            font-size: clamp(0.8em, 2vw, 0.9em);
+            font-size: clamp(0.75em, 1.8vw, 0.85em);
             opacity: 0.9;
+            display: inline;
+            margin-left: 10px;
         }
 
         /* 游戏信息面板 */
         .game-info-panel {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            display: flex;
+            flex-direction: column;
             gap: 6px;
-            margin-bottom: 8px;
         }
 
         .info-card {
             background: #f9f9f9;
-            padding: 6px;
+            padding: 8px 6px;
             border-radius: 8px;
             text-align: center;
         }
 
         .info-label {
-            font-size: clamp(0.7em, 1.8vw, 0.8em);
+            font-size: clamp(0.7em, 1.8vw, 0.75em);
             color: #666;
             margin-bottom: 2px;
+            display: block;
         }
 
         .info-value {
-            font-size: clamp(1em, 2.5vw, 1.2em);
+            font-size: clamp(0.95em, 2.2vw, 1.1em);
             font-weight: bold;
             color: #667eea;
+            display: block;
         }
 
-        /* 操作按钮 */
-        .action-btn {
+        /* 帮助按钮 */
+        .help-btn-header {
+            width: 40px;
+            height: 40px;
             background: #667eea;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: clamp(0.8em, 2vw, 0.95em);
-            font-weight: bold;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.3s;
-            margin-bottom: 8px;
-            width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border: none;
+            font-size: 20px;
+            flex-shrink: 0;
         }
 
-        .action-btn:hover {
+        .help-btn-header:hover {
             background: #5568d3;
-            transform: translateY(-2px);
+            transform: scale(1.1);
+        }
+
+        /* 操作按钮 - 隐藏原来的帮助按钮 */
+        .action-btn {
+            display: none;
         }
 
         .game-board {
             display: grid;
             gap: clamp(3px, 0.8vw, 6px);
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             aspect-ratio: 1;
-            max-width: min(500px, 85vw);
-            margin-left: auto;
-            margin-right: auto;
+            width: 100%;
+            max-width: min(550px, 90vw);
             flex-shrink: 0;
         }
 
@@ -464,6 +496,41 @@
             font-weight: bold;
             font-size: clamp(0.8em, 2vw, 0.9em);
         }
+
+        /* 响应式设计 - 小屏幕 */
+        @media (max-width: 600px) {
+            .game-content {
+                flex-direction: column;
+            }
+
+            .game-sidebar {
+                width: 100%;
+                order: 2;
+            }
+
+            .game-info-panel {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .info-card {
+                min-width: 80px;
+            }
+
+            .game-main {
+                order: 1;
+            }
+
+            .game-header {
+                flex-wrap: wrap;
+            }
+
+            .level-info {
+                order: 3;
+                flex: 1 1 100%;
+                margin: 8px 0 0 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -489,49 +556,63 @@
 
         <!-- 游戏页面 -->
         <div class="game-screen hidden" id="gameScreen">
-            <!-- 设置菜单 -->
-            <div class="settings-menu">
-                <div class="settings-icon" id="settingsIcon"></div>
-                <div class="settings-dropdown" id="settingsDropdown">
-                    <div class="settings-item" id="soundToggle">🔊 音效: 开</div>
-                    <div class="settings-item" id="pauseToggle">⏸ 暂停游戏</div>
-                    <div class="settings-item" id="quitGame">🚪 退出游戏</div>
+            <!-- 顶部区域：设置、关卡信息、帮助 -->
+            <div class="game-header">
+                <!-- 设置菜单 -->
+                <div class="settings-menu">
+                    <div class="settings-icon" id="settingsIcon"></div>
+                    <div class="settings-dropdown" id="settingsDropdown">
+                        <div class="settings-item" id="soundToggle">🔊 音效: 开</div>
+                        <div class="settings-item" id="pauseToggle">⏸ 暂停游戏</div>
+                        <div class="settings-item" id="quitGame">🚪 退出游戏</div>
+                    </div>
                 </div>
+
+                <!-- 关卡信息 -->
+                <div class="level-info">
+                    <h2>第 <span id="currentLevel">1</span> 关 - <span id="gridInfo">4×4</span></h2>
+                    <span class="sub-level">小关: <span id="subLevel">1</span>/5</span>
+                </div>
+
+                <!-- 帮助按钮 -->
+                <button class="help-btn-header" id="helpBtn">💡</button>
             </div>
 
             <h1>🎨 找不同的色块</h1>
 
-            <div class="level-info">
-                <h2>第 <span id="currentLevel">1</span> 关 - <span id="gridInfo">4×4</span></h2>
-                <div class="sub-level">小关: <span id="subLevel">1</span>/5</div>
+            <!-- 主内容区域 -->
+            <div class="game-content">
+                <!-- 左侧信息栏 -->
+                <div class="game-sidebar">
+                    <div class="game-info-panel">
+                        <div class="info-card">
+                            <div class="info-label">用时</div>
+                            <div class="info-value" id="timeDisplay">0:00</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">得分</div>
+                            <div class="info-value" id="score">0</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">连击</div>
+                            <div class="info-value" id="combo">0</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">正确率</div>
+                            <div class="info-value" id="accuracy">100%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧游戏区域 -->
+                <div class="game-main">
+                    <div class="message" id="message"></div>
+                    <div id="hintContainer"></div>
+                    <div class="game-board" id="gameBoard"></div>
+                </div>
             </div>
 
-            <!-- 游戏信息面板 -->
-            <div class="game-info-panel">
-                <div class="info-card">
-                    <div class="info-label">用时</div>
-                    <div class="info-value" id="timeDisplay">0:00</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-label">得分</div>
-                    <div class="info-value" id="score">0</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-label">连击</div>
-                    <div class="info-value" id="combo">0</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-label">正确率</div>
-                    <div class="info-value" id="accuracy">100%</div>
-                </div>
-            </div>
-
-            <button class="action-btn" id="helpBtn">💡 帮助</button>
-
-            <div class="message" id="message"></div>
-            <div id="hintContainer"></div>
-
-            <div class="game-board" id="gameBoard"></div>
+            <button class="action-btn" id="helpBtnOld">💡 帮助</button>
         </div>
 
         <!-- 通关页面 -->
